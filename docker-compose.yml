@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  enricher:
+    build: .
+    container_name: company-enricher
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./.cache:/app/.cache
+    networks:
+      - enricher-network
+    
+    # Example: enrich companies
+    command: >
+      enrich data/input/companies.csv 
+      --out data/output/enriched.csv 
+      --concurrency 8 
+      --checkpoint 500
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '1.0'
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Redis for distributed caching (if scaling horizontally)
+  redis:
+    image: redis:7-alpine
+    container_name: enricher-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - enricher-network
+    command: redis-server --appendonly yes
+    profiles:
+      - redis  # Only start with --profile redis
+    
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+
+networks:
+  enricher-network:
+    driver: bridge
+
+volumes:
+  redis-data:
