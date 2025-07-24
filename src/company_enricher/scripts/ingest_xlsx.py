@@ -35,6 +35,13 @@ def main():
     try:
         console.print(f"[blue]Loading {input_file}...")
         df = pl.read_excel(str(input_file))
+
+        # Pad and prefix the CompanyNumber
+        df = df.with_columns([
+            pl.col("CompanyNumber")
+            .cast(pl.Utf8)
+            .str.zfill(8)
+        ])
         
         console.print(f"[blue]Loaded {len(df)} rows, {len(df.columns)} columns")
         

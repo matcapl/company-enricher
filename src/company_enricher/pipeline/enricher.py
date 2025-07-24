@@ -35,8 +35,7 @@ class CompanyEnricher:
             limits=httpx.Limits(
                 max_keepalive_connections=20,
                 max_connections=100
-            ),
-            http2=True
+            )
         )
         return self
     
@@ -60,8 +59,17 @@ class CompanyEnricher:
     
     async def _perform_enrichment(self, company: CompanyRecord) -> EnrichmentResult:
         """Perform the actual enrichment logic."""
-        company_number = str(company["CompanyNumber"])
+        #company_number = str(company["CompanyNumber"])
+        
+        # Strip 'C' prefix before passing to Companies House
+        raw_number = str(company["CompanyNumber"])
+        company_number = raw_number.zfill(8)
         company_name = company["CompanyName"]
+
+        # Log for debugging
+        print(f"Processing: {company_name} with number: {company_number}")
+
+        # company_number = raw_number[1:] if raw_number.startswith("C") else raw_number
         
         logger.debug(f"Enriching {company_name} ({company_number})")
         
@@ -85,12 +93,16 @@ class CompanyEnricher:
             )
             
             # Step 2: Get registered address and geocode it
+                    # Old
+                    # geocoded = await geocoder.to_latlon(address_str, self.http_client)
+                    # result["manufacturing_location"] = geocoded or address_str
+                    # New
+                    # result["manufacturing_location"] = ""  # location parked for now
             if not isinstance(profile, Exception):
                 address_parts = profile.get("registered_office_address", {})
                 if address_parts:
                     address_str = self._format_address(address_parts)
-                    geocoded = await geocoder.to_latlon(address_str, self.http_client)
-                    result["manufacturing_location"] = geocoded or address_str
+                    result["manufacturing_location"] = ""
             
             # Step 3: Find company website
             website = await web_search.find_official_site(company_name, self.rate_limiter)

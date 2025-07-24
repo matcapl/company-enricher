@@ -17,23 +17,33 @@ classifiers = [
 ]
 
 dependencies = [
-    "httpx>=0.27.0",
-    "typer[all]>=0.12.0",
-    "rich>=13.7.0",
-    "polars[lazy]>=0.20.0",
-    "aiofiles>=23.2.0",
-    "diskcache>=5.6.0",
-    "duckduckgo-search>=5.3.0",
-    "pydantic>=2.5.0",
-    "pydantic-settings>=2.1.0",
-    "python-dotenv>=1.0.0",
-    "stream-read-xbrl>=0.0.46",
-    "pdfminer.six>=20221105",
-    "beautifulsoup4>=4.12.0",
-    "lxml>=4.9.0",
-    "openpyxl>=3.1.0",
-    "requests>=2.31.0",
-    "fastexcel>=0.14.0",
+  # ── core ───────────────────────────────────────────────────────────
+  "httpx[http2]>=0.27.0",   # ← installs the h2 package automatically
+  "typer>=0.12.0",
+  "rich>=13.7.0",
+  "polars>=0.20.0",
+  "pydantic>=2.5.0",
+  "pydantic-settings>=2.1.0",
+  "python-dotenv>=1.0.0",
+  "aiofiles>=23.2.0",
+  "diskcache>=5.6.0",
+
+  # ── external data ──────────────────────────────────────────────────
+  "ddgs>=1.0.3",            # ← replacement for deprecated duckduckgo-search
+  "requests>=2.31.0",
+
+  # ── documents & parsing ────────────────────────────────────────────
+  "stream-read-xbrl>=0.0.46",
+  "pdfminer.six>=20221105",
+  "beautifulsoup4>=4.12.0",
+  "lxml>=4.9.0",
+
+  # ── Excel ingestion ────────────────────────────────────────────────
+  "fastexcel>=0.14.0",      # Polars XLSX engine
+  "openpyxl>=3.1.0",
+
+  # ── optional (leave for later) ─────────────────────────────────────
+  # "opencage>=2.4.0",      # geocoding – disabled for now
 ]
 
 [project.optional-dependencies]
@@ -50,6 +60,8 @@ dev = [
 company-enricher = "company_enricher.cli:app"
 ingest-xlsx      = "company_enricher.scripts.ingest_xlsx:main"
 run-enrichment   = "company_enricher.scripts.run_enrichment:main"
+test-ch-key = "company_enricher.scripts.test_api_key:main"
+
 
 [project.urls]
 Homepage = "https://github.com/your-org/company-enricher"

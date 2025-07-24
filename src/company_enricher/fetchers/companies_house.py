@@ -24,7 +24,7 @@ class CompaniesHouseClient:
         try:
             response = await self.client.get(
                 url,
-                headers=settings.ch_auth_headers,
+                auth=(settings.companies_house_key, ""),
                 timeout=settings.http_timeout
             )
             response.raise_for_status()
@@ -81,7 +81,7 @@ class CompaniesHouseClient:
         try:
             response = await self.client.get(
                 url,
-                headers=settings.ch_auth_headers,
+                auth=(settings.companies_house_key, ""),
                 params=params,
                 timeout=settings.http_timeout
             )
@@ -99,7 +99,7 @@ class CompaniesHouseClient:
             meta_url = f"{self.doc_base_url}/document/{document_id}"
             meta_response = await self.client.get(
                 meta_url,
-                headers=settings.ch_auth_headers,
+                auth=(settings.companies_house_key, ""),
                 timeout=settings.http_timeout
             )
             meta_response.raise_for_status()
@@ -109,7 +109,7 @@ class CompaniesHouseClient:
             doc_url = meta_data["links"]["document"]
             doc_response = await self.client.get(
                 doc_url,
-                headers=settings.ch_auth_headers,
+                auth=(settings.companies_house_key, ""),
                 timeout=settings.http_timeout * 2  # Longer timeout for document download
             )
             doc_response.raise_for_status()

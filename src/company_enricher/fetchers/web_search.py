@@ -5,7 +5,7 @@ import re
 from typing import Optional, List
 from urllib.parse import urlparse
 import httpx
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 from ..cache import cached
 from ..logging_config import get_logger
 from ..pipeline.rate_limiter import RateLimiter
